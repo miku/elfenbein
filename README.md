@@ -39,4 +39,3 @@ The `solr` script is just:
 
 Again, change `/usr/local/Cellar/solr/4.1.0/libexec/example` to reflect
 your systems' setup.
-
