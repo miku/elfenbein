@@ -2,7 +2,7 @@
 <!--
 /**
  *
- * proof-of-concept grade solr schema.xml for building a separate authority data index for vufind   
+ * proof-of-concept grade solr schema.xml for building a separate authority data index for vufind
  * imitates linked data triples
  *
  * Copyright (C) 2012 Leander Seige, seige@ub.uni-leipzig.de
@@ -23,7 +23,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author   Leander Seige
- * @author   Martin Czygan 
+ * @author   Martin Czygan
  * @license  http://opensource.org/licenses/gpl-3.0.html GNU General Public License
  * @link     http://finc.info
  *
@@ -31,43 +31,39 @@
 -->
 <schema name="spo" version="1.4">
   <types>
-    <fieldType name="string" class="solr.StrField" sortMissingLast="true" 
-        omitNorms="true"/>
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
+    <!-- <fieldType name="uuid" class="solr.UUIDField" indexed="true" /> -->
     <fieldType name="long" class="solr.LongField"/>
     <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
       <analyzer type="index">
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.ICUNormalizer2FilterFactory"/>
-        <!--filter class="schema.UnicodeNormalizationFilterFactory" 
-            version="icu4j" composed="false" remove_diacritics="true" 
+        <!--filter class="schema.UnicodeNormalizationFilterFactory"
+            version="icu4j" composed="false" remove_diacritics="true"
             remove_modifiers="true" fold="true"/-->
-        <filter class="solr.StopFilterFactory" ignoreCase="true" 
-            words="stopwords.txt" enablePositionIncrements="true"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" enablePositionIncrements="true"/>
         <filter class="solr.LowerCaseFilterFactory"/>
         <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
       </analyzer>
       <analyzer type="query">
         <tokenizer class="solr.StandardTokenizerFactory"/>
         <filter class="solr.ICUNormalizer2FilterFactory"/>
-        <!--filter class="schema.UnicodeNormalizationFilterFactory" 
-            version="icu4j" composed="false" remove_diacritics="true" 
+        <!--filter class="schema.UnicodeNormalizationFilterFactory"
+            version="icu4j" composed="false" remove_diacritics="true"
             remove_modifiers="true" fold="true"/-->
-        <filter class="solr.StopFilterFactory" ignoreCase="true" 
-            words="stopwords.txt" enablePositionIncrements="true"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" enablePositionIncrements="true"/>
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
     </fieldType>
   </types>
   <fields>
-    <field name="id" type="string" indexed="true" stored="false" 
-        required="true"/>
+    <field name="id" type="string" indexed="true" stored="true" required="true"/>
     <field name="s" type="string" indexed="true" stored="true" required="true"/>
     <field name="p" type="text" indexed="true" stored="true" required="true"/>
-    <field name="o" type="text" indexed="true" stored="true" required="false" 
-        multiValued="true"/>
-    <!-- 
-      SOLR 4.x (It is used internally by Solr, for example by features 
-      like partial update functionality and update log; 
+    <field name="o" type="text" indexed="true" stored="true" required="false" multiValued="true"/>
+    <!--
+      SOLR 4.x (It is used internally by Solr, for example by features
+      like partial update functionality and update log;
       from: http://goo.gl/kGCuC)
     -->
     <field name="_version_" type="long" indexed="true" stored="true"/>
