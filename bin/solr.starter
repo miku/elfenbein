@@ -1,0 +1,7 @@
+#!/bin/sh
+if [ -z "$1" ]; then
+  echo "Usage: $ solr path/to/config/dir"
+else
+  cd /usr/local/Cellar/solr/4.1.0/libexec/example && \
+      java -server $JAVA_OPTS -Dsolr.solr.home=$1 -jar start.jar
+fi
