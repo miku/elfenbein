@@ -44,3 +44,8 @@ nosetests.xml
 
 # SOLR
 spo/data
+
+# Eclipse
+.settings
+.classpath
+.project
