@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<add>
+  <doc>
+    <field name="s">Alice</field>
+    <field name="p">likes</field>
+    <field name="o">Mary</field>
+  </doc>
+</add>
