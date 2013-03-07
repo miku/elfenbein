@@ -822,8 +822,9 @@
          on each Update Request
       -->
     <lst name="defaults">
+      <!-- <str name="update.chain">dedupeAndScript</str> -->
       <str name="update.chain">dedupe</str>
-      <str name="update.chain">id</str>
+      <!-- <str name="update.chain">script</str> -->
     </lst>
   </requestHandler>
   <!-- for back compat with clients using /update/json and /update/csv -->
@@ -1345,6 +1346,27 @@
        rich documents injected via ExtractingRequestHandler.
        See more about langId at http://wiki.apache.org/solr/LanguageDetection
     -->
+
+  <updateRequestProcessorChain name="dedupeAndScript">
+    <processor class="solr.processor.SignatureUpdateProcessorFactory">
+      <bool name="enabled">true</bool>
+      <str name="signatureField">id</str>
+      <bool name="overwriteDupes">false</bool>
+      <str name="fields">s,p,o</str>
+      <str name="signatureClass">solr.processor.Lookup3Signature</str>
+    </processor>
+
+      <processor class="solr.StatelessScriptUpdateProcessorFactory">
+        <str name="script">update-script.js</str>
+        <!-- <lst name="params">
+          <str name="config_param">example config parameter</str>
+        </lst> -->
+      </processor>
+
+    <processor class="solr.LogUpdateProcessorFactory"/>
+    <processor class="solr.RunUpdateProcessorFactory"/>
+  </updateRequestProcessorChain>
+
   <!--
      <updateRequestProcessorChain name="langid">
        <processor class="org.apache.solr.update.processor.TikaLanguageIdentifierUpdateProcessorFactory">
@@ -1362,17 +1384,16 @@
 
     See more about the script update processor at http://wiki.apache.org/solr/ScriptUpdateProcessor
   -->
-  <!--
     <updateRequestProcessorChain name="script">
       <processor class="solr.StatelessScriptUpdateProcessorFactory">
         <str name="script">update-script.js</str>
-        <lst name="params">
+        <!-- <lst name="params">
           <str name="config_param">example config parameter</str>
-        </lst>
+        </lst> -->
       </processor>
       <processor class="solr.RunUpdateProcessorFactory" />
     </updateRequestProcessorChain>
-  -->
+
   <!-- Response Writers
 
        http://wiki.apache.org/solr/QueryResponseWriter
