@@ -47,7 +47,7 @@ public class App {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
 		Date date = new Date();
 		final Meter triples = Metrics.newMeter(App.class, "triples_" + dateFormat.format(date),
-				"triple-added", TimeUnit.SECONDS);
+				"triples", TimeUnit.SECONDS);
 
 		ConsoleReporter.enable(REPORT_INTERVAL, TimeUnit.SECONDS);
 
