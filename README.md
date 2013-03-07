@@ -44,6 +44,14 @@ To start elfenbein (spo solr),
 To get your turtle file (.ttl) into the index, consult the `bin/trainman`.
 
     $ bin/trainman --help
+    usage: trainman [-b <N>] [--destroy-index] [-h] [-i <FILE>] [--ping] [-s
+           <URL>]
+     -b,--batch-size <N>   batch size for commits (10000)
+        --destroy-index    destroy the whole index
+     -h,--help             show help
+     -i,--infile <FILE>    read and index N-triples file into Solr
+        --ping             ping solr
+     -s,--solr <URL>       solr server URL (http://localhost:8983/solr)
 
 
 Development notes
