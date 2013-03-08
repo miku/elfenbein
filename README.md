@@ -10,17 +10,8 @@ Getting started
 You'll need a current clone of Apache's lucene-solr project to provide
 the necessary libraries (which aren't included here - yet).
 
-    $ mkdir -p ~/src/apache && cd src/apache
-    $ git clone git://git.apache.org/lucene-solr.git
-
-If you setup the clone as above, your `solrconfig.xml` should be good to go.
-Otherwise change the following elements in `spo/conf/solrconfig.xml` to reflect
-your systems' setup:
-
-    <lib dir="${user.home}/src/apache/lucene-solr/solr/contrib/extraction/lib" 
-        regex=".*\.jar" />
-    <lib dir="${user.home}/src/apache/lucene-solr/solr/build/contrib/solr-analysis-extras/lucene-libs" 
-        regex=".*\.jar" />
+Place (or symlink) all libraries listed in `spo/lib/CHECKLIST` into `spo/lib`.
+From there, `solrconfig.xml` will pick it up by default.
 
 On OS X (homebrew), there is small convenience script to start the
 server using embedded Jetty:
