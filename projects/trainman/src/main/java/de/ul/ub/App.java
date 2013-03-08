@@ -44,24 +44,6 @@ public class App {
 	// cf. https://issues.apache.org/jira/browse/CLI-224
 	public static void main(String[] args) throws ParseException, IOException {
 
-		// setup metrics (http://metrics.codahale.com/)
-		// add a distinct name to collect all metrics
-		DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-		Date date = new Date();
-		final Meter triples = Metrics.newMeter(App.class, "triples_"
-				+ dateFormat.format(date), "triples", TimeUnit.SECONDS);
-
-		ConsoleReporter.enable(REPORT_INTERVAL, TimeUnit.SECONDS);
-
-		// metrics will complain,
-		// if the directory for its measurements does not exists ..
-		File metricsDirectory = new File("work/measurements");
-		if (!metricsDirectory.exists()) {
-			metricsDirectory.mkdirs();
-		}
-
-		CsvReporter.enable(metricsDirectory, REPORT_INTERVAL, TimeUnit.SECONDS);
-
 		// setup options
 		Options options = new Options();
 
@@ -81,6 +63,13 @@ public class App {
 				.hasArg().create("s"));
 
 		options.addOption(OptionBuilder
+				.withArgName("NAME")
+				.withLongOpt("metrics-filename")
+				.withDescription(
+						"filename for benchmarks (triples_yyyy_MM_dd_HH_mm_ss.csv)")
+				.hasArg().create("m"));
+
+		options.addOption(OptionBuilder
 				.withArgName("N")
 				.hasArg()
 				.withDescription(
@@ -91,6 +80,29 @@ public class App {
 
 		CommandLineParser parser = new PosixParser();
 		CommandLine cmd = parser.parse(options, args);
+
+		// setup metrics (http://metrics.codahale.com/)
+		// add a distinct name to collect all metrics
+		final DateFormat dateFormat = new SimpleDateFormat(
+				"yyyy_MM_dd_HH_mm_ss");
+		final Date date = new Date();
+		String metricsFilename = "triples_" + dateFormat.format(date);
+		if (cmd.hasOption("metrics-filename")) {
+			metricsFilename = cmd.getOptionValue("metrics-filename");
+		}
+		final Meter triples = Metrics.newMeter(App.class, metricsFilename,
+				"triples", TimeUnit.SECONDS);
+
+		ConsoleReporter.enable(REPORT_INTERVAL, TimeUnit.SECONDS);
+
+		// metrics will complain,
+		// if the directory for its measurements does not exists ..
+		File metricsDirectory = new File("work/measurements");
+		if (!metricsDirectory.exists()) {
+			metricsDirectory.mkdirs();
+		}
+
+		CsvReporter.enable(metricsDirectory, REPORT_INTERVAL, TimeUnit.SECONDS);
 
 		// default solr server
 		String urlString = cmd.getOptionValue("s", DEFAULT_SOLR_URL);
