@@ -1,8 +1,10 @@
 package de.ul.ub;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -140,8 +142,9 @@ public class App {
 			String filename = cmd.getOptionValue("i");
 			LOGGER.debug("loading " + filename);
 
-			final FileInputStream is = new FileInputStream(filename);
-			final NxParser nxp = new NxParser(is);
+			final BufferedReader in = new BufferedReader(new InputStreamReader(
+					new FileInputStream(filename), "UTF8"));
+			final NxParser nxp = new NxParser(in);
 
 			Node[] nxx;
 			long counter = 0;
