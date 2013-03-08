@@ -21,7 +21,6 @@ var
 sdist
 develop-eggs
 .installed.cfg
-lib
 lib64
 __pycache__
 
@@ -51,3 +50,6 @@ spo/data
 
 # Work
 work
+
+# jar files
+spo/lib/*.jar
