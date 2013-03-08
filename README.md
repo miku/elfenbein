@@ -63,7 +63,7 @@ Performance evaluation
     Storage: SSD
     Time: 828 s
     Mean Rate: 575.59 triples/s
-    See: `exports/measurements/triples_2013_03_08_11_26_13.csv`
+    Details: exports/measurements/triples_2013_03_08_11_26_13.csv
 
 ----
 
@@ -73,7 +73,7 @@ Performance evaluation
     Storage: HDD
     Time: 845 s
     Mean Rate: 564.14 triples/s
-    See: `exports/measurements/triples_2013_03_08_12_04_26.csv`
+    Details: exports/measurements/triples_2013_03_08_12_04_26.csv
 
 
 Development notes
