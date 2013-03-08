@@ -54,6 +54,18 @@ To get your turtle file (.ttl) into the index, consult the `bin/trainman`.
      -s,--solr <URL>       solr server URL (http://localhost:8983/solr)
 
 
+Performance evaluation
+----------------------
+
+Server: Jetty
+Batchsize: 10000
+Documents: 476978
+Storage: SSD
+Time: 828 s
+Mean Rate: 575.59 triples/s
+See: `exports/measurements/triples_2013_03_08_11_26_13.csv`
+
+
 Development notes
 -----------------
 
