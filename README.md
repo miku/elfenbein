@@ -66,6 +66,43 @@ Performance evaluation
     Mean Rate: 564.14 triples/s
     Details: exports/measurements/triples_2013_03_08_12_04_26.csv
 
+----
+
+Using a vanilla MySQL DB and a
+SOLR [DataImportHandler](http://wiki.apache.org/solr/DataImportHandler):
+
+    Documents: 476978
+    Storage: SSD
+    Time: 220 s
+    Mean Rate: 2164.42 triples/s
+    Details: N/A
+
+Plus and additional
+
+    Time: 66.742 s
+
+for the import, which is started via:
+
+    $ curl -XGET -v http://localhost:8983/solr/dataimport?command=full-import
+    <?xml version="1.0" encoding="UTF-8"?>
+    <response>
+      <lst name="responseHeader">
+        <int name="status">0</int>
+        <int name="QTime">27</int>
+      </lst>
+      <lst name="initArgs">
+        <lst name="defaults">
+          <str name="config">db-data-config.xml</str>
+          <str name="update.chain">dedupe</str>
+        </lst>
+      </lst>
+      <str name="command">full-import</str>
+      <str name="status">idle</str>
+      <str name="importResponse"/>
+      <lst name="statusMessages"/>
+      <str name="WARNING">This response format is experimental.  It is likely to change in the future.</str>
+    </response>
+
 
 Development notes
 -----------------

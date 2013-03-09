@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<dataConfig>
+  <dataSource driver="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/elfenbein" user="elfenbein" password="elfenbein"/>
+  <document>
+    <entity name="triple" query="SELECT s, p, o from triples">
+      <field column="s" name="s"/>
+      <field column="p" name="p"/>
+      <field column="o" name="o"/>
+    </entity>
+  </document>
+</dataConfig>

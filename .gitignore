@@ -53,3 +53,6 @@ work
 
 # jar files
 spo/lib/*.jar
+
+# dataimporthandler
+dataimport.properties

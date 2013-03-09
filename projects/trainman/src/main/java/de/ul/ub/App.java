@@ -17,6 +17,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -24,6 +25,8 @@ import org.apache.solr.client.solrj.response.SolrPingResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.semanticweb.yars.nx.Node;
 import org.semanticweb.yars.nx.parser.NxParser;
+import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +41,9 @@ public class App {
     private static long DEFAULT_BATCH_SIZE = 10000;
     private static String DEFAULT_SOLR_URL = "http://localhost:8983/solr";
     private static int REPORT_INTERVAL = 10;
+    private static String DEFAULT_JDBC_URL = "jdbc:mysql://localhost:3306/elfenbein";
+    private static String DEFAULT_DB_USERNAME = "elfenbein";
+    private static String DEFAULT_DB_PASSWORD = "elfenbein";
 
     @SuppressWarnings("static-access")
     // cf. http://stackoverflow.com/a/12467149/89391
@@ -76,6 +82,19 @@ public class App {
                         "batch size for commits (" + DEFAULT_BATCH_SIZE + ")")
                 .withLongOpt("batch-size").withType(Number.class).create("b"));
 
+        // database options
+        options.addOption(OptionBuilder.withArgName("URL").hasArg()
+                .withDescription("JDBC URL (" + DEFAULT_JDBC_URL + ")")
+                .withLongOpt("jdbc").create("j"));
+
+        options.addOption(OptionBuilder.withArgName("USERNAME").hasArg()
+                .withDescription("db username (" + DEFAULT_DB_USERNAME + ")")
+                .withLongOpt("username").create("u"));
+
+        options.addOption(OptionBuilder.withArgName("PASSWORD").hasArg()
+                .withDescription("db password (" + DEFAULT_DB_PASSWORD + ")")
+                .withLongOpt("password").create("p"));
+
         options.addOption("h", "help", false, "show help");
 
         CommandLineParser parser = new PosixParser();
@@ -104,9 +123,20 @@ public class App {
 
         CsvReporter.enable(metricsDirectory, REPORT_INTERVAL, TimeUnit.SECONDS);
 
-        // default solr server
+        // prepare solr server connection
         String urlString = cmd.getOptionValue("s", DEFAULT_SOLR_URL);
         final SolrServer solr = new HttpSolrServer(urlString);
+
+        // setup DB connection
+        String jdbcUrl = cmd.getOptionValue("jdbc", DEFAULT_JDBC_URL);
+        String username = cmd.getOptionValue("username", DEFAULT_DB_USERNAME);
+        String password = cmd.getOptionValue("jdbc", DEFAULT_DB_PASSWORD);
+
+        BasicDataSource ds = new BasicDataSource();
+        ds.setUsername(username);
+        ds.setPassword(password);
+        ds.setDriverClassName("com.mysql.jdbc.Driver");
+        ds.setUrl(jdbcUrl);
 
         if (cmd.hasOption('h')) {
             HelpFormatter formatter = new HelpFormatter();
@@ -137,19 +167,8 @@ public class App {
 
         if (cmd.hasOption("i")) {
 
-            // default batch size
-            long batchSize = DEFAULT_BATCH_SIZE;
-            if (cmd.hasOption("b")) {
-                batchSize = (Long) cmd.getParsedOptionValue("b");
-            }
-
-            // make sure solr is there
-            try {
-                solr.ping();
-            } catch (SolrServerException sse) {
-                LOGGER.error(sse.getLocalizedMessage());
-                System.exit(1);
-            }
+            final DBI dbi = new DBI(ds);
+            final Handle h = dbi.open();
 
             String filename = cmd.getOptionValue("i");
             LOGGER.debug("loading " + filename);
@@ -159,37 +178,16 @@ public class App {
             final NxParser nxp = new NxParser(in);
 
             Node[] nxx;
-            long counter = 0;
             while (nxp.hasNext()) {
                 nxx = (Node[]) nxp.next();
-                SolrInputDocument document = new SolrInputDocument();
-                document.addField("s", nxx[0]);
-                document.addField("p", nxx[1]);
-                document.addField("o", nxx[2]);
-                try {
-                    solr.add(document);
-                    counter += 1;
-                    triples.mark();
-                } catch (SolrServerException sse) {
-                    LOGGER.error(sse.getLocalizedMessage());
-                    System.exit(1);
-                }
-                if (counter % batchSize == 0) {
-                    try {
-                        solr.commit();
-                    } catch (SolrServerException sse) {
-                        LOGGER.error(sse.getLocalizedMessage());
-                        System.exit(1);
-                    }
-                }
+                h.execute("insert into triples (s, p, o) values (?, ?, ?) on duplicate key " +
+                        "update s = VALUES(s), p = VALUES (p), o = VALUES(o), last_modified = NOW()",
+                        nxx[0].toString(),
+                        nxx[1].toString(),
+                        nxx[2].toString());
+                triples.mark();
             }
-
-            try {
-                solr.commit();
-            } catch (SolrServerException sse) {
-                LOGGER.error(sse.getLocalizedMessage());
-                System.exit(1);
-            }
+            h.close();
         }
     }
 }

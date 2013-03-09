@@ -65,7 +65,6 @@
        The examples below can be used to load some solr-contribs along 
        with their external dependencies.
     -->
-
   <!-- If a 'dir' option (with or without a regex) is used and nothing
        is found that matches, it will be ignored
     -->
@@ -973,6 +972,12 @@
        </lst>
     -->
   </requestHandler>
+  <requestHandler name="/dataimport" class="org.apache.solr.handler.dataimport.DataImportHandler">
+    <lst name="defaults">
+      <str name="config">db-data-config.xml</str>
+      <str name="update.chain">dedupe</str>
+    </lst>
+  </requestHandler>
   <!-- Search Components
 
        Search components are registered to SolrCore and used by 
@@ -1047,7 +1052,7 @@
       <!-- maximum threshold of documents a query term can appear to be considered for correction -->
       <float name="maxQueryFrequency">0.01</float>
       <!-- uncomment this to require suggestions to occur in 1% of the documents
-      	<float name="thresholdTokenFrequency">.01</float>
+        <float name="thresholdTokenFrequency">.01</float>
       -->
     </lst>
     <!-- a spellchecker that can break or combine words.  See "/spell" handler below for usage -->
@@ -1270,8 +1275,7 @@
       <boundaryScanner name="default" default="true" class="solr.highlight.SimpleBoundaryScanner">
         <lst name="defaults">
           <str name="hl.bs.maxScan">10</str>
-          <str name="hl.bs.chars">.,!? 	
-&#13;</str>
+          <str name="hl.bs.chars">.,!?  &#13;</str>
         </lst>
       </boundaryScanner>
       <boundaryScanner name="breakIterator" class="solr.highlight.BreakIteratorBoundaryScanner">
@@ -1333,7 +1337,6 @@
        rich documents injected via ExtractingRequestHandler.
        See more about langId at http://wiki.apache.org/solr/LanguageDetection
     -->
-
   <updateRequestProcessorChain name="dedupeAndScript">
     <processor class="solr.processor.SignatureUpdateProcessorFactory">
       <bool name="enabled">true</bool>
@@ -1342,18 +1345,15 @@
       <str name="fields">s,p,o</str>
       <str name="signatureClass">solr.processor.Lookup3Signature</str>
     </processor>
-
-      <processor class="solr.StatelessScriptUpdateProcessorFactory">
-        <str name="script">update-script.js</str>
-        <!-- <lst name="params">
+    <processor class="solr.StatelessScriptUpdateProcessorFactory">
+      <str name="script">update-script.js</str>
+      <!-- <lst name="params">
           <str name="config_param">example config parameter</str>
         </lst> -->
-      </processor>
-
+    </processor>
     <processor class="solr.LogUpdateProcessorFactory"/>
     <processor class="solr.RunUpdateProcessorFactory"/>
   </updateRequestProcessorChain>
-
   <!--
      <updateRequestProcessorChain name="langid">
        <processor class="org.apache.solr.update.processor.TikaLanguageIdentifierUpdateProcessorFactory">
@@ -1371,16 +1371,15 @@
 
     See more about the script update processor at http://wiki.apache.org/solr/ScriptUpdateProcessor
   -->
-    <updateRequestProcessorChain name="script">
-      <processor class="solr.StatelessScriptUpdateProcessorFactory">
-        <str name="script">update-script.js</str>
-        <!-- <lst name="params">
+  <updateRequestProcessorChain name="script">
+    <processor class="solr.StatelessScriptUpdateProcessorFactory">
+      <str name="script">update-script.js</str>
+      <!-- <lst name="params">
           <str name="config_param">example config parameter</str>
         </lst> -->
-      </processor>
-      <processor class="solr.RunUpdateProcessorFactory" />
-    </updateRequestProcessorChain>
-
+    </processor>
+    <processor class="solr.RunUpdateProcessorFactory"/>
+  </updateRequestProcessorChain>
   <!-- Response Writers
 
        http://wiki.apache.org/solr/QueryResponseWriter
